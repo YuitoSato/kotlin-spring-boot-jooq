@@ -24,6 +24,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("com.michael-bull.kotlin-result:kotlin-result:2.0.0")
+  implementation("org.springframework.boot:spring-boot-starter-aop")
 
   runtimeOnly("org.postgresql:postgresql")
 

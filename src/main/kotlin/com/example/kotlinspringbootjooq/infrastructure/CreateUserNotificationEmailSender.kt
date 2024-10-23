@@ -5,7 +5,9 @@ import com.example.kotlinspringbootjooq.application.SendCreateUserNotificationEm
 import com.example.kotlinspringbootjooq.domain.User
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
+import org.springframework.stereotype.Component
 
+@Component
 class CreateUserNotificationEmailSendGridSender() : CreateUserNotificationEmailSender {
 
   override fun send(

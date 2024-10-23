@@ -5,16 +5,16 @@ import com.example.kotlinspringbootjooq.application.RegisterUserUseCaseError.Val
 import com.example.kotlinspringbootjooq.domain.User
 import com.example.kotlinspringbootjooq.domain.UserRepository
 import com.example.kotlinspringbootjooq.domain.ValidateAndCreateUserError
-import com.example.kotlinspringbootjooq.utils.ResultTransactional
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.getOrThrow
 import com.github.michaelbull.result.mapError
 import org.apache.coyote.BadRequestException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
-@ResultTransactional
+@Transactional
 class RegisterUserUseCase2(
   private val userRepository: UserRepository,
   private val createUserNotificationEmailSender: CreateUserNotificationEmailSender,

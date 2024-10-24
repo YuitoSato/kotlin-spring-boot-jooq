@@ -1,5 +1,6 @@
 package com.example.kotlinspringbootjooq.domain
 
+import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.binding
@@ -95,16 +96,24 @@ class UserName(val value: String) {
         fun validateAndCreate(
             name: String,
         ): Result<UserName, ValidateAndCreateUserError> {
-            return TODO()
+            return Ok(UserName(name))
         }
+
+        fun of(
+            name: String
+        ) = UserName(name)
     }
 }
 
-class UserId(val value: String) {
+class UserId(val value: Int) {
 
     companion object {
         fun generate(): UserId {
-            return TODO()
+            return UserId(1)
+        }
+
+        fun of(value: Int): UserId {
+            return UserId(value)
         }
     }
 }
@@ -115,7 +124,11 @@ class Email(val value: String) {
         fun validateAndCreate(
             email: String,
         ): Result<Email, ValidateAndCreateUserError> {
-            return TODO()
+            return Ok(Email(email))
         }
+
+        fun of(
+            email: String
+        ): Email = Email(email)
     }
 }

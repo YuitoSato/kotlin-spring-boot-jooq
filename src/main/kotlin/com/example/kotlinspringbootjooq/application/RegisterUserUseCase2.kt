@@ -13,6 +13,9 @@ import org.apache.coyote.BadRequestException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+/**
+ * ユースケースが例外の変換まで行うパターン
+ */
 @Service
 @Transactional
 class RegisterUserUseCase2(
@@ -23,11 +26,11 @@ class RegisterUserUseCase2(
   fun execute(
     param: RegisterUserDto,
   ) {
-    executeInner(param)
+    executeAndHandleError(param)
       .getOrThrow { it.toException() }
   }
 
-  private fun executeInner(
+  private fun executeAndHandleError(
     param: RegisterUserDto,
   ): Result<Unit, RegisterUserUseCaseError> {
     return User.validateAndCreate(

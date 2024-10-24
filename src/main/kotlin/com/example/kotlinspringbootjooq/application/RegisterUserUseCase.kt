@@ -14,40 +14,40 @@ import org.springframework.stereotype.Service
 @Service
 @ResultTransactional
 class RegisterUserUseCase(
-  private val userRepository: UserRepository,
-  private val createUserNotificationEmailSender: CreateUserNotificationEmailSender,
+    private val userRepository: UserRepository,
+    private val createUserNotificationEmailSender: CreateUserNotificationEmailSender,
 ) {
 
-  fun execute(
-    param: RegisterUserDto,
-  ): Result<Unit, RegisterUserUseCaseError> {
-    return User.validateAndCreate(
-      param.userName,
-      param.email,
-    ).mapError { error ->
-      ValidateAndCreateUserUseCaseError(error)
-    }.andThen { createdUser ->
-      userRepository.insert(createdUser)
-      createUserNotificationEmailSender
-        .send(createdUser)
-        .mapError { error ->
-          SendCreateUserNotificationEmailUseCaseError(error)
+    fun execute(
+        param: RegisterUserDto,
+    ): Result<Unit, RegisterUserUseCaseError> {
+        return User.validateAndCreate(
+            param.userName,
+            param.email,
+        ).mapError { error ->
+            ValidateAndCreateUserUseCaseError(error)
+        }.andThen { createdUser ->
+            userRepository.insert(createdUser)
+            createUserNotificationEmailSender
+                .send(createdUser)
+                .mapError { error ->
+                    SendCreateUserNotificationEmailUseCaseError(error)
+                }
         }
     }
-  }
 }
 
 data class RegisterUserDto(
-  val userName: String,
-  val email: String,
+    val userName: String,
+    val email: String,
 )
 
 sealed interface RegisterUserUseCaseError {
-  data class ValidateAndCreateUserUseCaseError(
-    val error: ValidateAndCreateUserError
-  ) : RegisterUserUseCaseError
+    data class ValidateAndCreateUserUseCaseError(
+        val error: ValidateAndCreateUserError
+    ) : RegisterUserUseCaseError
 
-  data class SendCreateUserNotificationEmailUseCaseError(
-    val error: SendCreateUserNotificationEmailError
-  ) : RegisterUserUseCaseError
+    data class SendCreateUserNotificationEmailUseCaseError(
+        val error: SendCreateUserNotificationEmailError
+    ) : RegisterUserUseCaseError
 }

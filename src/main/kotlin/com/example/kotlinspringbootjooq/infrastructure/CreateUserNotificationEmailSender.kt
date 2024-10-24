@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component
 @Component
 class CreateUserNotificationEmailSendGridSender() : CreateUserNotificationEmailSender {
 
-  override fun send(
-    createdUser: User,
-  ): Result<Unit, SendCreateUserNotificationEmailError> {
-    // 通知メール送信処理
-    return Ok(println(createdUser.email))
-  }
+    override fun send(
+        createdUser: User,
+    ): Result<Unit, SendCreateUserNotificationEmailError> {
+        // 通知メール送信処理
+        return Ok(println(createdUser.email))
+    }
 }

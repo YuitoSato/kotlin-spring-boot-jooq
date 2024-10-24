@@ -19,45 +19,45 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class RegisterUserUseCase2(
-  private val userRepository: UserRepository,
-  private val createUserNotificationEmailSender: CreateUserNotificationEmailSender,
+    private val userRepository: UserRepository,
+    private val createUserNotificationEmailSender: CreateUserNotificationEmailSender,
 ) {
 
-  fun execute(
-    param: RegisterUserDto,
-  ) {
-    executeAndHandleError(param)
-      .getOrThrow { it.toException() }
-  }
+    fun execute(
+        param: RegisterUserDto,
+    ) {
+        executeAndHandleError(param)
+            .getOrThrow { it.toException() }
+    }
 
-  private fun executeAndHandleError(
-    param: RegisterUserDto,
-  ): Result<Unit, RegisterUserUseCaseError> {
-    return User.validateAndCreate(
-      param.userName,
-      param.email,
-    ).mapError { error ->
-      ValidateAndCreateUserUseCaseError(error)
-    }.andThen { createdUser ->
-      userRepository.insert(createdUser)
-      createUserNotificationEmailSender
-        .send(createdUser)
-        .mapError { error ->
-          SendCreateUserNotificationEmailUseCaseError(error)
+    private fun executeAndHandleError(
+        param: RegisterUserDto,
+    ): Result<Unit, RegisterUserUseCaseError> {
+        return User.validateAndCreate(
+            param.userName,
+            param.email,
+        ).mapError { error ->
+            ValidateAndCreateUserUseCaseError(error)
+        }.andThen { createdUser ->
+            userRepository.insert(createdUser)
+            createUserNotificationEmailSender
+                .send(createdUser)
+                .mapError { error ->
+                    SendCreateUserNotificationEmailUseCaseError(error)
+                }
         }
     }
-  }
 }
 
 fun RegisterUserUseCaseError.toException(): BadRequestException {
-  return when (this) {
-    is RegisterUserUseCaseError.ValidateAndCreateUserUseCaseError -> when (this.error) {
-      is ValidateAndCreateUserError.UserNameInvalidLength -> BadRequestException("Invalid user name")
-      is ValidateAndCreateUserError.EmailInvalidFormat -> BadRequestException("Invalid email")
-    }
+    return when (this) {
+        is RegisterUserUseCaseError.ValidateAndCreateUserUseCaseError -> when (this.error) {
+            is ValidateAndCreateUserError.UserNameInvalidLength -> BadRequestException("Invalid user name")
+            is ValidateAndCreateUserError.EmailInvalidFormat -> BadRequestException("Invalid email")
+        }
 
-    is RegisterUserUseCaseError.SendCreateUserNotificationEmailUseCaseError -> when (this.error) {
-      is SendCreateUserNotificationEmailError.RecipientNotFound -> BadRequestException("Recipient not found")
+        is RegisterUserUseCaseError.SendCreateUserNotificationEmailUseCaseError -> when (this.error) {
+            is SendCreateUserNotificationEmailError.RecipientNotFound -> BadRequestException("Recipient not found")
+        }
     }
-  }
 }

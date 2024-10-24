@@ -14,42 +14,42 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/tasks")
 class UserController(
-  private val registerUserUseCase: RegisterUserUseCase,
+    private val registerUserUseCase: RegisterUserUseCase,
 ) {
 
-  fun registerUser(
-    request: RegisterUserRequest
-  ): String {
-    val dto = request.toDto()
-    val result = registerUserUseCase.execute(dto)
-    return result
-      .map { "OK" }
-      .getOrThrow { error -> error.toException() }
-  }
+    fun registerUser(
+        request: RegisterUserRequest
+    ): String {
+        val dto = request.toDto()
+        val result = registerUserUseCase.execute(dto)
+        return result
+            .map { "OK" }
+            .getOrThrow { error -> error.toException() }
+    }
 }
 
 data class RegisterUserRequest(
-  val userName: String,
-  val email: String,
+    val userName: String,
+    val email: String,
 ) {
 
-  fun toDto(): RegisterUserDto {
-    return RegisterUserDto(
-      userName = userName,
-      email = email,
-    )
-  }
+    fun toDto(): RegisterUserDto {
+        return RegisterUserDto(
+            userName = userName,
+            email = email,
+        )
+    }
 }
 
 fun RegisterUserUseCaseError.toException(): BadRequestException {
-  return when (this) {
-    is RegisterUserUseCaseError.ValidateAndCreateUserUseCaseError -> when (this.error) {
-      is ValidateAndCreateUserError.UserNameInvalidLength -> BadRequestException("Invalid user name")
-      is ValidateAndCreateUserError.EmailInvalidFormat -> BadRequestException("Invalid email")
-    }
+    return when (this) {
+        is RegisterUserUseCaseError.ValidateAndCreateUserUseCaseError -> when (this.error) {
+            is ValidateAndCreateUserError.UserNameInvalidLength -> BadRequestException("Invalid user name")
+            is ValidateAndCreateUserError.EmailInvalidFormat -> BadRequestException("Invalid email")
+        }
 
-    is RegisterUserUseCaseError.SendCreateUserNotificationEmailUseCaseError -> when (this.error) {
-      is SendCreateUserNotificationEmailError.RecipientNotFound -> BadRequestException("Recipient not found")
+        is RegisterUserUseCaseError.SendCreateUserNotificationEmailUseCaseError -> when (this.error) {
+            is SendCreateUserNotificationEmailError.RecipientNotFound -> BadRequestException("Recipient not found")
+        }
     }
-  }
 }

@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class KotlinSpringBootJooqApplication
 
 fun main(args: Array<String>) {
-  runApplication<KotlinSpringBootJooqApplication>(*args)
+    runApplication<KotlinSpringBootJooqApplication>(*args)
 }

@@ -5,11 +5,11 @@ import com.github.michaelbull.result.Result
 
 interface CreateUserNotificationEmailSender {
 
-  fun send(
-    createdUser: User,
-  ): Result<Unit, SendCreateUserNotificationEmailError>
+    fun send(
+        createdUser: User,
+    ): Result<Unit, SendCreateUserNotificationEmailError>
 }
 
 sealed interface SendCreateUserNotificationEmailError {
-  data class RecipientNotFound(val email: String) : SendCreateUserNotificationEmailError
+    data class RecipientNotFound(val email: String) : SendCreateUserNotificationEmailError
 }

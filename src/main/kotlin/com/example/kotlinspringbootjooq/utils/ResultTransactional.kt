@@ -17,16 +17,16 @@ annotation class ResultTransactional
 @Aspect
 class ResultTransactionalAspect {
 
-  @Around("@annotation(ResultTransactional)")
-  fun handleResultTransaction(joinPoint: ProceedingJoinPoint): Any? {
-    val proceeded = joinPoint.proceed()
+    @Around("@annotation(ResultTransactional)")
+    fun handleResultTransaction(joinPoint: ProceedingJoinPoint): Any? {
+        val proceeded = joinPoint.proceed()
 
-    val isErr = proceeded.javaClass.name == "com.github.michaelbull.result.Failure"
+        val isErr = proceeded.javaClass.name == "com.github.michaelbull.result.Failure"
 
-    if (isErr) {
-      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly()
+        if (isErr) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly()
+        }
+
+        return proceeded
     }
-
-    return proceeded
-  }
 }

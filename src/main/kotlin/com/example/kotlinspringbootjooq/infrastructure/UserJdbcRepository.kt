@@ -12,36 +12,36 @@ import org.springframework.stereotype.Component
 
 @Component
 class UserJdbcRepository(
-  val jooq: DSLContext
+    val jooq: DSLContext
 ) : UserRepository {
-  override fun findById(id: UserId): User? {
-    return jooq.selectFrom(USERS)
-      .where(USERS.ID.eq(id.value))
-      .fetchOne()
-      ?.toDomain()
-  }
+    override fun findById(id: UserId): User? {
+        return jooq.selectFrom(USERS)
+            .where(USERS.ID.eq(id.value))
+            .fetchOne()
+            ?.toDomain()
+    }
 
-  override fun insert(user: User) {
-    jooq.batchInsert(listOf(user.toRecord())).execute()
-  }
+    override fun insert(user: User) {
+        jooq.batchInsert(listOf(user.toRecord())).execute()
+    }
 
-  override fun bulkInsert(users: List<User>) {
-    jooq.batchInsert(users.map { it.toRecord() }).execute()
-  }
+    override fun bulkInsert(users: List<User>) {
+        jooq.batchInsert(users.map { it.toRecord() }).execute()
+    }
 }
 
 fun UsersRecord.toDomain(): User {
-  return User(
-    id = UserId.of(this.id),
-    userName = UserName.of(this.userName),
-    email = Email.of(this.email),
-  )
+    return User(
+        id = UserId.of(this.id),
+        userName = UserName.of(this.userName),
+        email = Email.of(this.email),
+    )
 }
 
 fun User.toRecord(): UsersRecord {
-  return UsersRecord(
-    this.id.value,
-    this.userName.value,
-    this.email.value,
-  )
+    return UsersRecord(
+        this.id.value,
+        this.userName.value,
+        this.email.value,
+    )
 }

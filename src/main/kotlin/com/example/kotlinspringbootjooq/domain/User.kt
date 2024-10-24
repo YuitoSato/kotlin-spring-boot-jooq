@@ -109,7 +109,7 @@ class UserId(val value: Int) {
 
     companion object {
         fun generate(): UserId {
-            return UserId(1)
+            return UserId((0..100).random())
         }
 
         fun of(value: Int): UserId {

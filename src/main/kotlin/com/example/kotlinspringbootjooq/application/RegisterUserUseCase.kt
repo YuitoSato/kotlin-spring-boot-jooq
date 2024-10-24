@@ -6,18 +6,19 @@ import com.example.kotlinspringbootjooq.domain.User
 import com.example.kotlinspringbootjooq.domain.UserRepository
 import com.example.kotlinspringbootjooq.domain.ValidateAndCreateUserError
 import com.example.kotlinspringbootjooq.utils.ResultTransactional
+import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.mapError
 import org.springframework.stereotype.Service
 
 @Service
-@ResultTransactional
 class RegisterUserUseCase(
     private val userRepository: UserRepository,
     private val createUserNotificationEmailSender: CreateUserNotificationEmailSender,
 ) {
 
+    @ResultTransactional
     fun execute(
         param: RegisterUserDto,
     ): Result<Unit, RegisterUserUseCaseError> {
@@ -33,6 +34,27 @@ class RegisterUserUseCase(
                 .mapError { error ->
                     SendCreateUserNotificationEmailUseCaseError(error)
                 }
+        }
+    }
+
+    @ResultTransactional
+    fun executeAndFail(
+        param: RegisterUserDto,
+    ): Result<Unit, RegisterUserUseCaseError> {
+        return User.validateAndCreate(
+            param.userName,
+            param.email,
+        ).mapError { error ->
+            ValidateAndCreateUserUseCaseError(error)
+        }.andThen { createdUser ->
+            userRepository.insert(createdUser)
+            createUserNotificationEmailSender
+                .send(createdUser)
+                .mapError { error ->
+                    SendCreateUserNotificationEmailUseCaseError(error)
+                }
+        }.andThen {
+            Err(ValidateAndCreateUserUseCaseError(ValidateAndCreateUserError.UserNameInvalidLength("hoge")))
         }
     }
 }

@@ -14,12 +14,12 @@ import com.github.michaelbull.result.mapError
 import org.springframework.stereotype.Service
 
 @Service
-@ResultTransactional
 class BulkRegisterUserUseCase(
     private val userRepository: UserRepository,
     private val createUserNotificationEmailSender: CreateUserNotificationEmailSender,
 ) {
 
+    @ResultTransactional
     fun execute(
         params: List<RegisterUserDto>,
     ): Result<Unit, RegisterUserUseCaseError> = binding {
@@ -46,6 +46,7 @@ class BulkRegisterUserUseCase(
         }
     }
 
+    @ResultTransactional
     fun execute_zip(
         params: List<RegisterUserDto>,
     ): Result<Unit, RegisterUserUseCaseError> = binding {
@@ -72,6 +73,7 @@ class BulkRegisterUserUseCase(
         }
     }
 
+    @ResultTransactional
     fun execute_combineOrAccumulate(
         params: List<RegisterUserDto>,
     ): Result<Unit, List<RegisterUserUseCaseError>> = binding {

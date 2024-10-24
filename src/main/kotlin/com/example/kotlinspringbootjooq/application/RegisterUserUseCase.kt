@@ -9,6 +9,7 @@ import com.example.kotlinspringbootjooq.utils.ResultTransactional
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
+import com.github.michaelbull.result.map
 import com.github.michaelbull.result.mapError
 import org.springframework.stereotype.Service
 
@@ -21,7 +22,7 @@ class RegisterUserUseCase(
     @ResultTransactional
     fun execute(
         param: RegisterUserDto,
-    ): Result<Unit, RegisterUserUseCaseError> {
+    ): Result<User, RegisterUserUseCaseError> {
         return User.validateAndCreate(
             param.userName,
             param.email,
@@ -31,6 +32,7 @@ class RegisterUserUseCase(
             userRepository.insert(createdUser)
             createUserNotificationEmailSender
                 .send(createdUser)
+                .map { createdUser }
                 .mapError { error ->
                     SendCreateUserNotificationEmailUseCaseError(error)
                 }
